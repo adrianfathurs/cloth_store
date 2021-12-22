@@ -22,9 +22,8 @@
         class="hidden-sm-and-down pl-10 ml-4"
       />
       <v-spacer />
-      <v-btn icon>
-        <v-icon>mdi-account-circle</v-icon>
-      </v-btn>
+     
+      <LoginDialog statusDialog="dialogLogin"></LoginDialog>
       <v-btn v-on="on" icon>
         <v-badge
           content="2"
@@ -138,7 +137,11 @@
   </v-app>
 </template>
 <script>
+import LoginDialog from './Login.vue'
     export default {
+        components:{
+          LoginDialog
+        },
         data () {
             return {
                 items: [
@@ -149,6 +152,7 @@
                     { title: 'Shoes' },
                 ],
                 activeBtn: 1,
+                dialogLogin:false,
             }
         },
     }

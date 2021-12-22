@@ -112,3 +112,26 @@
     </v-container>
   </div>
 </template>
+<script>
+import {getProducts} from "../utils/api"
+export default {
+  data() {
+    return {
+      
+    }
+  },
+  methods:{
+    async getAllProduct(){
+      try {
+        let response = await getProducts({page:"1"});
+        console.log(response);
+      } catch (error) {
+        console.log("ini error blog"+error)
+      }
+    }
+  },
+  mounted() {
+    this.getAllProduct();
+  },
+}
+</script>
