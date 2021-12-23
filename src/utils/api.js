@@ -69,4 +69,5 @@ instance.interceptors.response.use(
 //endpoint
 export const getProducts = (params)=> instance.get("products",{params});
 export const postLogin = (params)=> instance.post("login",params);
+export const postRegister = (params)=> instance.post("register",params);
 

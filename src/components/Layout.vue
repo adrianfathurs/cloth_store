@@ -22,8 +22,7 @@
         class="hidden-sm-and-down pl-10 ml-4"
       />
       <v-spacer />
-     
-      <LoginDialog statusDialog="dialogLogin"></LoginDialog>
+      
       <v-btn v-on="on" icon>
         <v-badge
           content="2"
@@ -44,6 +43,8 @@
           <v-icon>mdi-cart</v-icon>
         </v-badge>
       </v-btn>
+      <LoginDialog  @cookiesLogin="doSomething()" v-show="cookies == null "></LoginDialog>
+      <DropdownLogin v-show="cookies != null "></DropdownLogin>
     </v-app-bar>
     <v-content>
       <v-bottom-navigation
@@ -138,9 +139,10 @@
 </template>
 <script>
 import LoginDialog from './Login.vue'
+import DropdownLogin from './DropdownLogin.vue'
     export default {
         components:{
-          LoginDialog
+          LoginDialog,DropdownLogin
         },
         data () {
             return {
@@ -153,7 +155,18 @@ import LoginDialog from './Login.vue'
                 ],
                 activeBtn: 1,
                 dialogLogin:false,
+                cookies:null,
             }
+        },
+        methods: {
+          doSomething(){
+            this.cookies=this.$cookies.get("token");
+            
+          }
+        },
+        created() {
+          console.log(this.$cookies.get("token"))
+          this.cookies=this.$cookies.get("token");
         },
     }
 </script>

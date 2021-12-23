@@ -1,32 +1,43 @@
 <template lang="pug">
-  v-dialog(transition='dialog-top-transition' max-width='400')
-        template(v-slot:activator='{ on, attrs }')
-          v-btn(icon=''  v-bind='attrs' v-on='on')
-            v-icon mdi-account-circle
-        template(v-slot:default='statusDialog')
-          v-card
-            v-toolbar(color='primary' dark='') Login
-            v-card-text.p-4
-              validation-observer(ref='observer' v-slot='{ invalid }')
-                form(@submit.prevent='submit')
-                  validation-provider(v-slot='{ errors }' name='email' rules='required|email')
-                    v-text-field.mt-3(v-model='email' :error-messages='errors' label='E-mail' required='')
-                  v-text-field.input-group--focused(:append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'" :type="show2 ? 'text' : 'password'" name='input-10-2' label='Password' hint='At least 8 characters' v-model="password" @click:append='show2 = !show2')
-                  validation-provider(v-slot='{ errors }' name='checkbox')
-                    v-checkbox(v-model='keepLogin' :error-messages='errors' value='1' label='Keep Login' type='checkbox' required='')
-                v-btn(type='button' color="primary" @click="btnLogin()" :block="true" :disabled="invalid")
-                  | Login
-              center
-                label(style="font-weight:bold") OR
-              v-btn(type='button'  :block="true" @click="" )
-                v-row(justify="center")
-                    img.mt-1(:height="25" :width="25" src="@/assets/logo_google.png")
-                    p.ml-1.mt-2 Login With Google
+div
+  v-btn(icon='' @click="statusDialog=true"  v-bind='attrs' v-on='on')
+      v-icon mdi-account-circle
+  v-dialog(transition='dialog-top-transition' v-model="statusDialog" max-width='400')
+        
+    v-card
+      v-toolbar(color='primary' dark='') {{this.signUpMode==false?"Login":"Sign Up"}}
+      v-card-text.p-4
+        validation-observer(ref='observer' v-slot='{ invalid }')
+          form(@submit.prevent='submit')
+            validation-provider(v-if="signUpMode" v-slot='{ errors }' name='name' rules='required')
+              v-text-field.mt-3(v-model='name' :error-messages='errors' label='name' required='')
+            validation-provider(v-slot='{ errors }' name='email' rules='required|email')
+              v-text-field.mt-3(v-model='email' :error-messages='errors' label='E-mail' required='')
+            VuePhoneNumberInput(v-if="signUpMode" v-model='phoneNumber')
+            v-text-field.input-group--focused(:append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'" :type="show2 ? 'text' : 'password'" name='input-10-2' label='Password' hint='At least 8 characters' v-model="password" @click:append='show2 = !show2')
+            validation-provider(v-if="signUpMode==false" v-slot='{ errors }' name='checkbox')
+              v-checkbox(v-model='keepLogin' :error-messages='errors' :value="true" label='Keep Login' type='checkbox' required='')
+          v-btn(v-if="signUpMode==false" type='button' color="primary" @click=" btnLogin()" :block="true" :disabled="invalid")
+            | Login
+        center.mt-2.mb-2(v-if="signUpMode==false")
+          label(style="font-weight:bold") OR
+        v-btn(v-if="signUpMode==false" type='button'  :block="true" @click="" )
+          v-row(justify="center")
+              img.mt-1(:height="25" :width="25" src="@/assets/logo_google.png")
+              p.ml-1.mt-2 Login With Google
+        v-btn.mt-2( type='button' color="warning" :block="true" @click="btnSignUp()" )
+          | Sign Up
+        v-btn.mt-2(v-if="signUpMode" type='button'  :block="true" @click="btnLogin()" )
+          | Back
 </template>
 <script>
+  import Vue from 'vue'
+  const VuePhoneNumberInput = require('vue-phone-number-input');
+  import 'vue-phone-number-input/dist/vue-phone-number-input.css';
+ 
   import { required, digits, email, max, regex } from 'vee-validate/dist/rules'
   import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
-  import {postLogin} from '../utils/api'
+  import {postLogin,postRegister} from '../utils/api'
   setInteractionMode('eager')
 
   extend('digits', {
@@ -58,10 +69,14 @@
     components: {
       ValidationProvider,
       ValidationObserver,
+      VuePhoneNumberInput
     },
     data: () => ({
-      name: '',
+      name: null,
+      signUpMode:false,
+      keepLogin:false,
       show2: false,
+      statusDialog:false,
       password: '',
         rules: {
           required: value => !!value || 'Required.',
@@ -88,15 +103,62 @@
         console.log(this.$refs.observer.validate(),"validasi");
         console.log(newVal)
       },
+      keepLogin:function (newVal) {
+        if(!newVal){
+          this.keepLogin=false
+        }
+        console.log("keepLogin",newVal)
+      }
     },
     methods: {
+      async btnSignUp(){
+        try {
+            if(this.signUpMode==false){
+              this.signUpMode=true;
+            }else{
+              let obj={
+                name:this.name,
+                email:this.email,
+                password:this.password,
+                phone_number:this.phoneNumber
+              }
+                let response=await postRegister(obj)
+                console.log(response.data.message)
+                if(response.data.message.message == "Register Success" && response.data.message.code == 200 ){
+                  this.signUpMode=false
+                  alert("Kamu Berhasil Terdaftar!")
+                }else if(response.data.message.message == "User Already Exist" && response.data.message.code == 200){
+                  alert("User Already Exist")
+                }
+            }
+          } catch (error) {
+            console.log(error.message)
+            alert(error.message)  
+          }
+      },
       async btnLogin(){
-        let obj={
-          email:this.email,
+        if(this.signUpMode){
+          this.signUpMode=false
+        }else{
+          let obj={
+            email:this.email,
           password:this.password
         }
         let response=await postLogin(obj)
-        console.log(response,"ini response");
+          if(response.data.meta.code == 200){
+            console.log("berhasil login")
+            this.$store.dispatch("actionAuth",response.data.data)
+            this.$cookies.set("keepLogin", this.keepLogin ? "yes" : "no", "1y");
+            this.$cookies.set("token",response.data.data.token,this.keepLogin ? "1y":"1h")
+            this.$cookies.set("email",response.data.data.email,this.keepLogin ? "1y":"1h")
+            setTimeout(() => {
+              this.statusDialog=false
+            }, 1000);
+            this.$emit("cookiesLogin")
+          }else{
+            alert("gagal Login")
+          }
+            }
       },
       submit () {
         this.$refs.observer.validate()
