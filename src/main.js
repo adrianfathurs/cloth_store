@@ -6,9 +6,10 @@ import App from './App'
 import router from './router'
 import store from './utils/store'
 import VueCookies from 'vue-cookies'
+import infiniteScroll from 'vue-infinite-scroll'
+Vue.use(infiniteScroll)
 Vue.use(VueCookies)
 // import 'material-design-icons-iconfont/dist/material-design-icons.css'
-
 
 Vue.config.productionTip = false
 
@@ -18,6 +19,7 @@ new Vue({
   router,
   vuetify,
   store,
+  directives: {infiniteScroll},
   components: { App },
   template: '<App/>'
 })

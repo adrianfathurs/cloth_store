@@ -83,8 +83,8 @@
 
           <v-divider></v-divider>
 
-          <div class="row text-center">
-            <div class="col-md-3 col-sm-6 col-xs-12" :key="pro.id" v-for="pro in products">
+          <div class="row text-center" ref="scrolling">
+            <div class="col-md-3 col-sm-6 col-xs-12"  :key="pro.id" v-for="pro in products">
               <v-hover v-slot:default="{ hover }">
                 <v-card
                   class="mx-auto"
@@ -95,16 +95,16 @@
                     class="white--text align-end"
                     :aspect-ratio="16/9"
                     height="200px"
-                    :src="pro.src"
+                    :src="imageUrl+pro.productImage[0].file_name"
                   >
-                    <v-card-title>{{pro.type}} </v-card-title>
+                    <v-card-title>{{pro.product_availability}} </v-card-title>
                     <v-expand-transition>
                       <div
                         v-if="hover"
                         class="d-flex transition-fast-in-fast-out white darken-2 v-card--reveal display-3 white--text"
                         style="height: 100%;"
                       >
-                        <v-btn v-if="hover" href="/product" class="" outlined>VIEW</v-btn>
+                        <v-btn v-if="hover" @click="detailProduct(pro.id)" class="" outlined>VIEW</v-btn>
                       </div>
 
                     </v-expand-transition>
@@ -139,8 +139,15 @@
   }
 </style>
 <script>
+import { getAllProducts } from '../utils/api'
+import { imageURL } from '../utils/imageUrl'
     export default {
         data: () => ({
+            data:[],
+            scrollUp:0,
+            maxScroll:230,
+            busy:false,
+            imageUrl:imageURL,
             range: [0, 10000],
             select:'Popularity',
             options: [
@@ -277,5 +284,60 @@
                 }
             ]
         }),
+  methods:{
+    onScroll() {
+      var usersHeading = this.$refs["scrolling"];
+      if (usersHeading) {
+          var marginTopUsers = usersHeading.getBoundingClientRect().top;
+          console.log(marginTopUsers,"margin Top User")
+          var innerHeight = window.innerHeight;
+          console.log(innerHeight,"inner Height")
+          if(this.maxScroll > marginTopUsers){
+            this.maxScroll = marginTopUsers;
+            console.log("reload")
+          }else if(this.maxScroll < marginTopUsers){
+            console.log("tidak reload")
+          }
+                                
+      }  
+    },
+    loadMore(){
+      this.busy = true;
+      setTimeout(() => {
+        this.getAllProduct();
+        this.busy = false;
+        
+      }, 10000);
+      
+    },
+    async getAllProduct(){
+      try {
+        let response = await getAllProducts({page:"1"});
+      
+          if(response.data.metaData.code==200){
+            // console.log(response.data.metaData.products.data[0]);
+            this.products=response.data.metaData.products.data;
+            console.log(this.products)
+          }else if(response.data.metaData.code==400){
+            alert("Server Error")
+          }
+      } catch (error) {
+        console.log("ini error blog"+error)
+      }
+    },
+    detailProduct(id){
+      this.$router.push("/product/"+id);
     }
+  },
+  mounted() {
+    this.getAllProduct();
+    this.$nextTick(function() {
+        window.addEventListener('scroll', this.onScroll);
+        this.onScroll(); // needed for initial loading on page
+    }); 
+  },
+  beforeDestroy() {
+    window.removeEventListener('scroll', this.onScroll);
+  }  
+  }
 </script>

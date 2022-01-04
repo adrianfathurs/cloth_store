@@ -103,7 +103,7 @@
                     </v-list-item-avatar>
                     <v-list-item-content>
                       <v-list-item-title v-html="item.title"></v-list-item-title><v-rating v-model="rating" class="" background-color="warning lighten-3"
-                                                                                           color="warning" dense></v-rating>
+                                                                                          color="warning" dense></v-rating>
                       <v-list-item-subtitle v-html="item.subtitle"></v-list-item-subtitle>
                     </v-list-item-content>
                   </v-list-item>
@@ -364,7 +364,9 @@
   </div>
 </template>
 <script>
+import { getDetailProduct } from '../utils/api'
     export default {
+        props:['id'],
         data: () => ({
             rating:4.5,
             breadcrums: [
@@ -414,5 +416,19 @@
                 },
             ],
         }),
+        methods: {
+          async detailProductByID(id){
+            try {
+              console.log(id)
+              let response = await getDetailProduct(id);
+              console.log(response.data,"ini response detail product");
+            } catch (error) {
+              
+            }
+          }
+        },
+        mounted() {
+          this.detailProductByID(this.id);
+        },
     }
 </script>

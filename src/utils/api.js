@@ -1,6 +1,6 @@
 import axios from 'axios'
 import Vue from 'vue'
-export const BASE_URL_DEV='http://clothstore-api.website'
+export const BASE_URL_DEV='https://backend.clothstore-api.website'
 export const instance = axios.create({
   baseURL: `${BASE_URL_DEV}/api/v1/`,
   timeout: 6000,
@@ -67,7 +67,8 @@ instance.interceptors.response.use(
 // );
 
 //endpoint
-export const getProducts = (params)=> instance.get("products",{params});
+export const getAllProducts = (params)=> instance.get("products",{params});
+export const getDetailProduct = (params)=> instance.get("products/"+params);
 export const postLogin = (params)=> instance.post("login",params);
 export const postRegister = (params)=> instance.post("register",params);
 

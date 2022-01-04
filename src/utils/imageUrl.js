@@ -1,0 +1,1 @@
+export const imageURL = "https://backend.clothstore-api.website"

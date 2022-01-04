@@ -113,7 +113,7 @@
   </div>
 </template>
 <script>
-import {getProducts} from "../utils/api"
+import {getAllProducts} from "../utils/api"
 export default {
   data() {
     return {
@@ -123,7 +123,7 @@ export default {
   methods:{
     async getAllProduct(){
       try {
-        let response = await getProducts({page:"1"});
+        let response = await getAllProducts({page:"1"});
         console.log(response);
       } catch (error) {
         console.log("ini error blog"+error)

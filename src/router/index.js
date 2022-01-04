@@ -27,9 +27,10 @@ export default new Router({
           name:'Shop'
         },
         {
-          path:'/product',
+          path:'/product/:id',
           component:Product,
-          name:'Product'
+          name:'Product',
+          props:true,
         },
         {
           path:'/blog',
