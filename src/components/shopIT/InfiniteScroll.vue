@@ -3,7 +3,7 @@
     <div class="col-md-3 col-sm-6 col-xs-12 " style="height:100% !important"  v-for ="item in items" :key="item.id">
           <slot name="item" v-bind:item="item"></slot>
     </div>
-    <div v-if="items.length" v-observe-visibility="handleScrolledToBottom" style="height:10"></div>
+    <div v-if="items.length" v-observe-visibility="handleScrolledToBottom" ></div>
   </div>
 </template>
 <script>
