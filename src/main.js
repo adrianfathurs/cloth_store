@@ -6,8 +6,9 @@ import App from './App'
 import router from './router'
 import store from './utils/store'
 import VueCookies from 'vue-cookies'
-import infiniteScroll from 'vue-infinite-scroll'
-Vue.use(infiniteScroll)
+import VueObserveVisibility from 'vue-observe-visibility'
+
+Vue.use(VueObserveVisibility)
 Vue.use(VueCookies)
 // import 'material-design-icons-iconfont/dist/material-design-icons.css'
 
@@ -19,7 +20,7 @@ new Vue({
   router,
   vuetify,
   store,
-  directives: {infiniteScroll},
+  
   components: { App },
   template: '<App/>'
 })

@@ -4,29 +4,18 @@
       <div class="row">
         <div class="col-md-5 col-sm-5 col-xs-12">
           <v-carousel>
-            <v-carousel-item
-              :src="require('../assets/img/home/slider4.jpg')"
+            <v-carousel-item v-for="(item,index) in product.image" :key="index"
+              :src="imageUrl+item.file_name"
             >
             </v-carousel-item>
-            <v-carousel-item
-              :src="require('../assets/img/home/slider2.jpg')"
-            >
-            </v-carousel-item>
-            <v-carousel-item
-              :src="require('../assets/img/home/slider3.jpg')"
-            >
-            </v-carousel-item>
-            <v-carousel-item
-              :src="require('../assets/img/home/slider1.jpg')"
-            >
-            </v-carousel-item>
-
+            
+            
           </v-carousel>
         </div>
         <div class="col-md-7 col-sm-7 col-xs-12">
           <v-breadcrumbs class="pb-0" :items="breadcrums"></v-breadcrumbs>
           <div class="pl-6">
-            <p class="display-1 mb-0">Modern Black T-Shirt</p>
+            <p class="display-1 mb-0">{{this.product.nama}}</p>
             <v-card-actions class="pa-0">
               <p class="headline font-weight-light pt-3">$65.00 <del style="" class="subtitle-1 font-weight-thin">$80.00</del></p>
               <v-spacer></v-spacer>
@@ -35,7 +24,7 @@
               <span class="body-2	font-weight-thin"> 25 REVIEWS</span>
             </v-card-actions>
             <p class="subtitle-1 font-weight-thin">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nisl tincidunt eget nullam non. Tincidunt arcu non sodales neque sodales ut etiam. Lectus arcu bibendum at varius vel pharetra. Morbi tristique senectus et netus et malesuada.
+              {{this.product.deskripsi}}
             </p>
             <p class="title">SIZE</p>
             <v-radio-group v-model="row" row>
@@ -69,12 +58,7 @@
             <v-tab>REVIEWS</v-tab>
             <v-tab-item>
               <p class="pt-10 subtitle-1 font-weight-thin">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                dolore magna aliqua. Ultricies mi eget mauris pharetra et. Vel pretium lectus quam id leo in vitae turpis
-                massa. Orci dapibus ultrices in iaculis nunc. At auctor urna nunc id cursus metus. Integer feugiat
-                scelerisque varius morbi enim nunc. Aliquam sem et tortor consequat id porta nibh venenatis cras.
-                Pellentesque pulvinar pellentesque habitant morbi tristique senectus et netus. Malesuada nunc vel risus
-                commodo viverra maecenas. Neque volutpat ac tincidunt vitae semper quis.
+                {{this.product.deskripsi}}
               </p>
             </v-tab-item>
             <v-tab-item>
@@ -365,10 +349,13 @@
 </template>
 <script>
 import { getDetailProduct } from '../utils/api'
+import { imageURL } from '../utils/imageUrl'
     export default {
         props:['id'],
         data: () => ({
             rating:4.5,
+            product:[],
+            imageUrl:imageURL,
             breadcrums: [
                 {
                     text: 'Home',
@@ -421,7 +408,13 @@ import { getDetailProduct } from '../utils/api'
             try {
               console.log(id)
               let response = await getDetailProduct(id);
-              console.log(response.data,"ini response detail product");
+              if(response.data.metaData.code==200){
+                this.product=response.data.metaData.data.product
+                console.log(this.product)
+              }else{
+                alert("check server product")
+              }
+            
             } catch (error) {
               
             }

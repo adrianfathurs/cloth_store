@@ -17,6 +17,7 @@
     "vue": "^2.5.2",
     "vue-cookies": "^1.7.4",
     "vue-infinite-scroll": "^2.0.2",
+    "vue-observe-visibility": "^1.0.0",
     "vue-phone-number-input": "^1.1.12",
     "vue-router": "^3.0.1",
     "vuetify": "^2.2.14",

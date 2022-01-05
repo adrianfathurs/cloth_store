@@ -82,45 +82,47 @@
           </v-row>
 
           <v-divider></v-divider>
-          <infinite-scroll :items="products" @refresh="getAllProduct">
-            <template v-slot:item="{item}">
-              
-                
-                  <v-hover v-slot:default="{ hover }">
-                    <v-card
-                      class="mx-auto"
-                      color="grey lighten-4"
-                      max-width="600"
-                    >
-                      <v-img
-                        class="white--text align-end"
-                        :aspect-ratio="16/9"
-                        height="100%"
-                        :src="item.productImage.length==0?require('../assets/product/default.png'):imageUrl+item.productImage[0].file_name"
-                      >
-                        <v-card-title>{{item.product_availability}} </v-card-title>
-                        <v-expand-transition>
-                          <div
-                            v-if="hover"
-                            class="d-flex transition-fast-in-fast-out white darken-2 v-card--reveal display-3 white--text"
-                            style="height: 100%;"
-                          >
-                            <v-btn v-if="hover" @click="detailProduct(item.id)" class="" outlined>VIEW</v-btn>
-                          </div>
 
-                        </v-expand-transition>
-                      </v-img>
-                      <v-card-text class="text--primary">
-                        <div><a href="/product" style="text-decoration: none">{{item.name}}</a></div>
-                        <p>{{item.price}} IDR</p>
-                      </v-card-text>
-                    </v-card>
-                  </v-hover>
-               
-              
-            </template>
-          </infinite-scroll>
-          
+          <div class="row text-center" ref="scrolling">
+            <div class="col-md-3 col-sm-6 col-xs-12"  :key="pro.id" v-for="pro in products">
+              <v-hover v-slot:default="{ hover }">
+                <v-card
+                  class="mx-auto"
+                  color="grey lighten-4"
+                  max-width="600"
+                >
+                  <v-img
+                    class="white--text align-end"
+                    :aspect-ratio="16/9"
+                    height="200px"
+                    :src="imageUrl+pro.productImage[0].file_name"
+                  >
+                    <v-card-title>{{pro.product_availability}} </v-card-title>
+                    <v-expand-transition>
+                      <div
+                        v-if="hover"
+                        class="d-flex transition-fast-in-fast-out white darken-2 v-card--reveal display-3 white--text"
+                        style="height: 100%;"
+                      >
+                        <v-btn v-if="hover" @click="detailProduct(pro.id)" class="" outlined>VIEW</v-btn>
+                      </div>
+
+                    </v-expand-transition>
+                  </v-img>
+                  <v-card-text class="text--primary">
+                    <div><a href="/product" style="text-decoration: none">{{pro.name}}</a></div>
+                    <div>${{pro.price}}</div>
+                  </v-card-text>
+                </v-card>
+              </v-hover>
+            </div>
+          </div>
+          <div class="text-center mt-12">
+            <v-pagination
+              v-model="page"
+              :length="6"
+            ></v-pagination>
+          </div>
         </div>
       </div>
     </v-container>
@@ -139,14 +141,9 @@
 <script>
 import { getAllProducts } from '../utils/api'
 import { imageURL } from '../utils/imageUrl'
-import InfiniteScroll from '../components/shopIT/InfiniteScroll.vue'
     export default {
-        components:{
-          InfiniteScroll
-        },
         data: () => ({
             data:[],
-            products:[],
             scrollUp:0,
             maxScroll:230,
             busy:false,
@@ -201,6 +198,91 @@ import InfiniteScroll from '../components/shopIT/InfiniteScroll.vue'
                     ],
                 }
             ],
+            products:[
+                {
+                    id:1,
+                    name:'BLACK TEE',
+                    type:'Jackets',
+                    price:'18.00',
+                    src:require('../assets/img/shop/1.jpg')
+                },
+                {
+                    id:2,
+                    name:'WHITE TEE',
+                    type:'Polo',
+                    price:'40.00',
+                    src:require('../assets/img/shop/2.jpg')
+                },
+                {
+                    id:3,
+                    name:'Zara limited...',
+                    type:'Denim',
+                    price:'25.00',
+                    src:require('../assets/img/shop/3.jpg')
+                },
+                {
+                    id:4,
+                    name:'SKULL TEE',
+                    type:'Jackets',
+                    price:'30.00',
+                    src:require('../assets/img/shop/4.jpg')
+                },
+                {
+                    id:5,
+                    name:'MANGO WINTER',
+                    type:'Sweaters',
+                    price:'50.00',
+                    src:require('../assets/img/shop/5.jpg')
+                },
+                {
+                    id:6,
+                    name:'SHIRT',
+                    type:'Denim',
+                    price:'34.00',
+                    src:require('../assets/img/shop/6.jpg')
+                },
+                {
+                    id:7,
+                    name:'TRUCKER JACKET',
+                    type:'Jackets',
+                    price:'38.00',
+                    src:require('../assets/img/shop/7.jpg')
+                },
+                {
+                    id:8,
+                    name:'COATS',
+                    type:'Jackets',
+                    price:'25.00',
+                    src:require('../assets/img/shop/8.jpg')
+                },{
+                    id:9,
+                    name:'MANGO WINTER',
+                    type:'Sweaters',
+                    price:'50.00',
+                    src:require('../assets/img/shop/9.jpg')
+                },
+                {
+                    id:10,
+                    name:'SHIRT',
+                    type:'Denim',
+                    price:'34.00',
+                    src:require('../assets/img/shop/10.jpg')
+                },
+                {
+                    id:11,
+                    name:'TRUCKER JACKET',
+                    type:'Jackets',
+                    price:'38.00',
+                    src:require('../assets/img/shop/11.jpg')
+                },
+                {
+                    id:12,
+                    name:'COATS',
+                    type:'Jackets',
+                    price:'25.00',
+                    src:require('../assets/img/shop/12.jpg')
+                }
+            ]
         }),
   methods:{
     onScroll() {
@@ -228,19 +310,13 @@ import InfiniteScroll from '../components/shopIT/InfiniteScroll.vue'
       }, 10000);
       
     },
-    async getAllProduct(number){
+    async getAllProduct(){
       try {
-        console.log(number,"ini number")
-        let response = await getAllProducts({page:number});
+        let response = await getAllProducts({page:"1"});
       
           if(response.data.metaData.code==200){
             // console.log(response.data.metaData.products.data[0]);
-            let res=response.data.metaData.products.data;
-            for (let index = 0; index < res.length; index++) {
-              var element = res[index];
-              this.products.push(element)  
-            }
-            
+            this.products=response.data.metaData.products.data;
             console.log(this.products)
           }else if(response.data.metaData.code==400){
             alert("Server Error")
@@ -254,7 +330,7 @@ import InfiniteScroll from '../components/shopIT/InfiniteScroll.vue'
     }
   },
   mounted() {
-    this.getAllProduct(1);
+    this.getAllProduct();
     this.$nextTick(function() {
         window.addEventListener('scroll', this.onScroll);
         this.onScroll(); // needed for initial loading on page
