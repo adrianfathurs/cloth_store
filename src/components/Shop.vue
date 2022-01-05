@@ -3,7 +3,7 @@
     <v-container>
       <div class="row">
         <div
-         class="col-md-3 col-sm-3 col-xs-12"
+        class="col-md-3 col-sm-3 col-xs-12"
         >
           <v-card outlined>
             <v-card-title>Filters</v-card-title>
@@ -181,6 +181,11 @@ import InfiniteScroll from '../components/shopIT/InfiniteScroll.vue'
             min:0,
             max:10000,
             items: [
+                {
+                    id: 3,
+                    name: 'All',
+                    
+                },
                 {
                     id: 2,
                     name: 'Shoes',
