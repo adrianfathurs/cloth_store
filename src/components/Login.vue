@@ -154,17 +154,21 @@ div
           password:this.password
         }
         let response=await postLogin(obj)
-          if(response.data.meta.code == 200){
+          if(response.data.meta.code == 200 && response.data.meta.is_verified==1){
             console.log("berhasil login")
-            this.$store.dispatch("actionAuth",response.data.data)
+            this.$store.dispatch("actionAuth",response.data.meta)
             this.$cookies.set("keepLogin", this.keepLogin ? "yes" : "no", "1y");
-            this.$cookies.set("token",response.data.data.token,this.keepLogin ? "1y":"1h")
+            this.$cookies.set("token",response.data.meta.token,this.keepLogin ? "1y":"1h")
             // this.$cookies.set("email",response.data.data.email,this.keepLogin ? "1y":"1h")
             setTimeout(() => {
               this.statusDialog=false
             }, 1000);
             this.$emit("cookiesLogin")
-          }else{
+          }else if(response.data.meta.code == 200 && response.data.meta.is_verified==0){
+            this.$cookies.set("token",response.data.meta.token,this.keepLogin ? "1y":"1h");
+            this.otpModal=true;
+          }
+          else{
             alert("gagal Login")
           }
             }
