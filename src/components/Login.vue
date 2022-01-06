@@ -29,12 +29,13 @@ div
           | Sign Up
         v-btn.mt-2(v-if="signUpMode" type='button'  :block="true" @click="btnLogin()" )
           | Back
+  otp-modal(v-show="otpModal" :otpModal="otpModal" @backParent="changeOTPModal()")
 </template>
 <script>
   import Vue from 'vue'
   const VuePhoneNumberInput = require('vue-phone-number-input');
   import 'vue-phone-number-input/dist/vue-phone-number-input.css';
- 
+  import OtpModal from '../components/shopIT/OtpModal.vue'
   import { required, digits, email, max, regex } from 'vee-validate/dist/rules'
   import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
   import {postLogin,postRegister} from '../utils/api'
@@ -69,9 +70,11 @@ div
     components: {
       ValidationProvider,
       ValidationObserver,
-      VuePhoneNumberInput
+      VuePhoneNumberInput,
+      OtpModal,
     },
     data: () => ({
+      otpModal:false,
       name: null,
       signUpMode:false,
       keepLogin:false,
@@ -111,6 +114,11 @@ div
       }
     },
     methods: {
+      changeOTPModal(){
+        this.otpModal=false;
+        this.statusDialog=false
+        this.$emit("cookiesLogin")
+      },
       async btnSignUp(){
         try {
             if(this.signUpMode==false){
@@ -124,11 +132,12 @@ div
               }
                 let response=await postRegister(obj)
                 console.log(response.data.message)
-                if(response.data.message.message == "Register Success" && response.data.message.code == 200 ){
+                if( response.data.message.code == 200 ){
+                  this.otpModal=true
                   this.signUpMode=false
-                  alert("Kamu Berhasil Terdaftar!")
+                  this.$cookies.set("token",response.data.message.token.token,this.keepLogin ? "1y":"1h")
                 }else if(response.data.message.message == "User Already Exist" && response.data.message.code == 200){
-                  alert("User Already Exist")
+                  alert("User Already Exist, Langsung Login")
                 }
             }
           } catch (error) {
@@ -150,7 +159,7 @@ div
             this.$store.dispatch("actionAuth",response.data.data)
             this.$cookies.set("keepLogin", this.keepLogin ? "yes" : "no", "1y");
             this.$cookies.set("token",response.data.data.token,this.keepLogin ? "1y":"1h")
-            this.$cookies.set("email",response.data.data.email,this.keepLogin ? "1y":"1h")
+            // this.$cookies.set("email",response.data.data.email,this.keepLogin ? "1y":"1h")
             setTimeout(() => {
               this.statusDialog=false
             }, 1000);

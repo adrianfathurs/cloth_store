@@ -5,7 +5,7 @@ export const instance = axios.create({
   baseURL: `${BASE_URL_DEV}/api/v1/`,
   timeout: 6000,
   headers: {
-    Authorization: Vue.$cookies? `Bearer ${VUe.$cookies.get("token","")}`:"",
+    Authorization: Vue.$cookies? `Bearer ${Vue.$cookies.get("token","")}`:"",
     Accept:"application/json",
     "Content-Type":"application/json" 
   }
@@ -66,9 +66,14 @@ instance.interceptors.response.use(
 //   }
 // );
 
-//endpoint
+/* ENDPOINT */
+//product
 export const getAllProducts = (params)=> instance.get("products",{params});
 export const getDetailProduct = (params)=> instance.get("products/"+params);
+//authentication
 export const postLogin = (params)=> instance.post("login",params);
 export const postRegister = (params)=> instance.post("register",params);
+export const postCheckOTP =(params)=>instance.post("checkOTP",params);
+//Banner
+export const getAllBanner=(params)=>instance.get("banner",params)
 

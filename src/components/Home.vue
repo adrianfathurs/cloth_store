@@ -1,8 +1,8 @@
 <template>
   <div>
     <v-carousel hide-delimiters>
-      <v-carousel-item
-        :src="require('../assets/img/home/slider4.jpg')"
+      <v-carousel-item v-for="item in banner" :key="item.id"
+        :src="item.file_name?imageUrl+item.file_name:require('../assets/product/default.png')"
       >
         <v-row
           class="fill-height"
@@ -12,40 +12,6 @@
           <div class="display-2 white--text pl-5 pr-5 hidden-sm-only"><strong>Upto 60% + Extra 10%</strong></div><br/>
         </v-row>
       </v-carousel-item>
-      <v-carousel-item
-        :src="require('../assets/img/home/slider2.jpg')"
-      >
-        <v-row
-          class="fill-height"
-          align="center"
-          justify="center"
-        >
-          <div class="display-2 white--text pl-5 pr-5 hidden-sm-only"><strong>Upto 60% + Extra 10%</strong></div><br/>
-        </v-row>
-      </v-carousel-item>
-      <v-carousel-item
-        :src="require('../assets/img/home/slider3.jpg')"
-      >
-        <v-row
-          class="fill-height"
-          align="center"
-          justify="center"
-        >
-          <div class="display-2 white--text pl-5 pr-5 hidden-sm-only"><strong>Upto 60% + Extra 10%</strong></div><br/>
-        </v-row>
-      </v-carousel-item>
-      <v-carousel-item
-        :src="require('../assets/img/home/slider1.jpg')"
-      >
-        <v-row
-          class="fill-height"
-          align="center"
-          justify="center"
-        >
-          <div class="display-2 white--text pl-5 pr-5 hidden-sm-only"><strong>Upto 60% + Extra 10%</strong></div><br/>
-        </v-row>
-      </v-carousel-item>
-
     </v-carousel>
     <div class="pl-4 pr-4 row">
       <div
@@ -343,9 +309,13 @@
 </template>
 
 <script>
+    import {getAllBanner} from '@/utils/api.js'
+    import {imageURL} from '@/utils/imageUrl.js'
     export default {
         data () {
             return {
+                banner:[],
+                imageUrl:imageURL,
                 items: [
                     { title: 'Click Me' },
                     { title: 'Click Me' },
@@ -368,6 +338,20 @@
                     'Fifth',
                 ],
             }
+        },
+        methods: {
+          async getBanner(){
+            try {
+              let response = await getAllBanner();
+              console.log(response.data.data,"response get banner")
+              this.banner=response.data.data;
+            } catch (error) {
+              console.log(error)
+            }
+          }
+        },
+        mounted() {
+          this.getBanner();
         },
     }
 </script>

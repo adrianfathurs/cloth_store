@@ -1,0 +1,44 @@
+.shopIT-h1 {
+  display: block;
+  font-size: 42px;
+  font-weight: bold;
+}
+.shopIT-h2 {
+  display: block;
+  font-size: 32px;
+  font-weight: bold;
+}
+.shopIT-h3 {
+  display: block;
+  font-size: 24px;
+  font-weight: bold;
+}
+.shopIT-h4 {
+  display: block;
+  font-size: 14px;
+  font-weight: bold;
+}
+.shopIT-h5 {
+  display: block;
+  font-size: 12px;
+  font-weight: bold;
+}
+.mt-4 {
+  margin-top: 24px;
+}
+.mt-3 {
+  margin-top: 18px;
+}
+.mt-2 {
+  margin-top: 12px;
+}
+.mt-1 {
+  margin-top: 6px;
+}
+
+/* content  layouting */
+.content-center {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}

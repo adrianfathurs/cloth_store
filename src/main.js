@@ -7,7 +7,9 @@ import router from './router'
 import store from './utils/store'
 import VueCookies from 'vue-cookies'
 import VueObserveVisibility from 'vue-observe-visibility'
-
+import OtpInput from "@bachdgvn/vue-otp-input";
+import "../src/assets/css/variable.css"
+Vue.component("v-otp-input", OtpInput);
 Vue.use(VueObserveVisibility)
 Vue.use(VueCookies)
 // import 'material-design-icons-iconfont/dist/material-design-icons.css'
