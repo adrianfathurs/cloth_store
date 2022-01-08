@@ -4,7 +4,7 @@
       <div class="row">
         <div class="col-md-5 col-sm-5 col-xs-12">
           <v-carousel>
-            <v-carousel-item v-for="(item,index) in product.image" :key="index"
+            <v-carousel-item v-for="(item,index) in product.productImage" :key="index"
               :src="imageUrl+item.file_name"
             >
             </v-carousel-item>
@@ -15,7 +15,7 @@
         <div class="col-md-7 col-sm-7 col-xs-12">
           <v-breadcrumbs class="pb-0" :items="breadcrums"></v-breadcrumbs>
           <div class="pl-6">
-            <p class="display-1 mb-0">{{this.product.nama}}</p>
+            <p class="display-1 mb-0">{{this.product.name}}</p>
             <v-card-actions class="pa-0">
               <p class="headline font-weight-light pt-3">$65.00 <del style="" class="subtitle-1 font-weight-thin">$80.00</del></p>
               <v-spacer></v-spacer>
@@ -24,8 +24,11 @@
               <span class="body-2	font-weight-thin"> 25 REVIEWS</span>
             </v-card-actions>
             <p class="subtitle-1 font-weight-thin">
-              {{this.product.deskripsi}}
+              {{this.product.description}}
             </p>
+            <v-row>
+
+            <v-col>
             <p class="title">SIZE</p>
             <v-radio-group v-model="row" row>
               <v-radio label="XS" value="XS"></v-radio>
@@ -34,14 +37,25 @@
               <v-radio label="L" value="l"></v-radio>
               <v-radio label="XL" value="xl"></v-radio>
             </v-radio-group>
+            </v-col>
+            <v-col>
             <p class="title">ITEMS</p>
-
             <v-text-field
                 outlined
                 style="width:100px"
                 :value="1"
                 dense
             ></v-text-field>
+            </v-col>
+            </v-row>
+            <p class="title">COLOR</p>
+            <v-radio-group v-model="row" row>
+              <v-radio label="HITAM" value="XS"></v-radio>
+              <v-radio label="HIJAU" value="s"></v-radio>
+              <v-radio label="MERAH" value="m"></v-radio>
+              <v-radio label="BIRU" value="l"></v-radio>
+              <v-radio label="KUNIG" value="xl"></v-radio>
+            </v-radio-group>
             <v-btn class="primary white--text" outlined tile dense><v-icon>mdi-cart</v-icon> ADD TO CART</v-btn>
             <v-btn class="ml-4" outlined tile>ADD TO WISHLIST</v-btn>
 
@@ -58,7 +72,7 @@
             <v-tab>REVIEWS</v-tab>
             <v-tab-item>
               <p class="pt-10 subtitle-1 font-weight-thin">
-                {{this.product.deskripsi}}
+                {{this.product.description}}
               </p>
             </v-tab-item>
             <v-tab-item>
@@ -409,7 +423,7 @@ import { imageURL } from '../utils/imageUrl'
               console.log(id)
               let response = await getDetailProduct(id);
               if(response.data.metaData.code==200){
-                this.product=response.data.metaData.data.product
+                this.product=response.data.metaData.product
                 console.log(this.product)
               }else{
                 alert("check server product")

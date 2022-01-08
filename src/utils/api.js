@@ -76,4 +76,6 @@ export const postRegister = (params)=> instance.post("register",params);
 export const postCheckOTP =(params)=>instance.post("checkOTP",params);
 //Banner
 export const getAllBanner=(params)=>instance.get("banner",params)
-
+//Category
+export const getAllCategory=(params)=>instance.get("categories",params)
+export const getCategoryById=(params)=>instance.get("products",{params})

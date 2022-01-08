@@ -9,7 +9,7 @@
             <v-card-title>Filters</v-card-title>
             <v-divider></v-divider>
             <template>
-              <v-treeview :items="items" :open="[1]" :active="[5]" :selected-color="'#fff'" activatable open-on-click dense></v-treeview>
+              <v-treeview :items="items" v-model="chooseFilter" @update:active="onFilter" :open="[1]" :active="[5]" :selected-color="'#fff'" activatable open-on-click dense></v-treeview>
             </template>
             <v-divider></v-divider>
             <v-card-title>Price</v-card-title>
@@ -52,24 +52,11 @@
               <v-checkbox append-icon="mdi-star" label="2 & above" hide-details dense></v-checkbox>
               <v-checkbox append-icon="mdi-star" label="1 & above" hide-details dense></v-checkbox>
             </v-container>
-            <v-divider></v-divider>
-            <v-card-title class="pb-0">Size</v-card-title>
-            <v-container class="pt-0" fluid>
-              <v-checkbox  label="XS" hide-details dense></v-checkbox>
-              <v-checkbox  label="S" hide-details dense></v-checkbox>
-              <v-checkbox  label="M" hide-details dense></v-checkbox>
-              <v-checkbox  label="L" hide-details dense></v-checkbox>
-              <v-checkbox  label="XL" hide-details dense></v-checkbox>
-              <v-checkbox  label="XXL" hide-details dense></v-checkbox>
-              <v-checkbox  label="XXXL" hide-details dense></v-checkbox>
-            </v-container>
-
           </v-card>
         </div>
         <div
           class="col-md-9 col-sm-9 col-xs-12"
         >
-
           <v-breadcrumbs class="pb-0" :items="breadcrums"></v-breadcrumbs>
 
           <v-row dense>
@@ -95,23 +82,25 @@
                       <v-img
                         class="white--text align-end"
                         :aspect-ratio="16/9"
-                        height="100%"
+                        height="200px"
                         :src="item.productImage.length==0?require('../assets/product/default.png'):imageUrl+item.productImage[0].file_name"
                       >
-                        <v-card-title>{{item.product_availability}} </v-card-title>
+                        <!-- <v-card-title>{{item.product_availability}} </v-card-title> -->
                         <v-expand-transition>
                           <div
                             v-if="hover"
                             class="d-flex transition-fast-in-fast-out white darken-2 v-card--reveal display-3 white--text"
                             style="height: 100%;"
                           >
-                            <v-btn v-if="hover" @click="detailProduct(item.id)" class="" outlined>VIEW</v-btn>
+                            <v-btn v-if="hover && item.product_availability==1" @click="detailProduct(item.id)" class="" color="green lighten-1" outlined>VIEW</v-btn>
+                            <v-btn v-else-if="hover && item.product_availability==0" class="" style="color:red;" outlined>SOLD OUT</v-btn>
+                            
                           </div>
 
                         </v-expand-transition>
                       </v-img>
                       <v-card-text class="text--primary">
-                        <div><a href="/product" style="text-decoration: none">{{item.name}}</a></div>
+                        <div><a href="/product" style="text-decoration: none">{{item.name.length> 13 ? item.name.substring(0,9)+" [...]":item.name}}</a></div>
                         <p>{{item.price}} IDR</p>
                       </v-card-text>
                     </v-card>
@@ -137,14 +126,22 @@
   }
 </style>
 <script>
-import { getAllProducts } from '../utils/api'
+import { getAllProducts, getAllCategory, getCategoryById } from '../utils/api'
 import { imageURL } from '../utils/imageUrl'
 import InfiniteScroll from '../components/shopIT/InfiniteScroll.vue'
     export default {
         components:{
           InfiniteScroll
         },
+        watch:{
+          // chooseFilter:{
+          //   handle:function(newVal){
+          //       console.log(newVal);
+          //     }
+          // }
+        },
         data: () => ({
+            chooseFilter:[0],
             data:[],
             products:[],
             scrollUp:0,
@@ -182,32 +179,44 @@ import InfiniteScroll from '../components/shopIT/InfiniteScroll.vue'
             max:10000,
             items: [
                 {
-                    id: 3,
+                    id: 0,
                     name: 'All',
                     
                 },
-                {
-                    id: 2,
-                    name: 'Shoes',
-                    children: [
-                        { id: 2, name: 'Casuals' },
-                        { id: 3, name: 'Formals' },
-                        { id: 4, name: 'Sneakers' },
-                    ],
-                },
-                {
-                    id: 1,
-                    name: 'Clothing',
-                    children: [
-                        { id: 5, name: 'Shirts' },
-                        { id: 6, name: 'Tops' },
-                        { id: 7, name: 'Tunics' },
-                        { id: 8, name: 'Bodysuit' },
-                    ],
-                }
+
             ],
         }),
   methods:{
+    
+    async getCategoriesById(params){
+      try {
+        let response= await getCategoryById({category:params});
+      
+        this.max=response.data.metaData.max_price;
+        this.range=[0,response.data.metaData.max_price]
+        console.log(response.data.metaData.max_price)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    onFilter(chooseFilter){
+      console.log(chooseFilter[0])
+      if(chooseFilter.length != 0 && chooseFilter[0]==3){
+        this.getCategoriesById("jeans")
+      }
+      
+    },
+    async getCategories(){
+            let response = await getAllCategory();
+            console.log(response.data)
+            response.data.data.map((item)=>{
+              var obj={
+                id:item.id,
+                name:item.name.charAt(0).toUpperCase()+item.name.slice(1),
+              }
+              this.items.push(obj);
+            })
+    },
     onScroll() {
       var usersHeading = this.$refs["scrolling"];
       if (usersHeading) {
@@ -260,6 +269,7 @@ import InfiniteScroll from '../components/shopIT/InfiniteScroll.vue'
   },
   mounted() {
     this.getAllProduct(1);
+    this.getCategories();
     this.$nextTick(function() {
         window.addEventListener('scroll', this.onScroll);
         this.onScroll(); // needed for initial loading on page

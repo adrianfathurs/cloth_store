@@ -70,7 +70,7 @@
             <v-list-item
               v-for="(item, index) in items"
               :key="index"
-              @click=""
+              
               href="/shop"
             >
               <v-list-item-title>{{ item.title }}</v-list-item-title>
@@ -140,6 +140,7 @@
 <script>
 import LoginDialog from './Login.vue'
 import DropdownLogin from './DropdownLogin.vue'
+import {getAllCategory} from '../utils/api'
     export default {
         components:{
           LoginDialog,DropdownLogin
@@ -147,11 +148,8 @@ import DropdownLogin from './DropdownLogin.vue'
         data () {
             return {
                 items: [
-                    { title: 'T-Shirts' },
-                    { title: 'Jackets' },
-                    { title: 'Shirts' },
-                    { title: 'Jeans' },
-                    { title: 'Shoes' },
+                    { id:0,title: 'All' },
+                    
                 ],
                 activeBtn: 1,
                 dialogLogin:false,
@@ -161,12 +159,22 @@ import DropdownLogin from './DropdownLogin.vue'
         methods: {
           doSomething(){
             this.cookies=this.$cookies.get("token");
-            
+          },
+          async getCategories(){
+            let response = await getAllCategory();
+            response.data.data.map((item)=>{
+              var obj={
+                id:item.id,
+                title:item.name.charAt(0).toUpperCase()+item.name.slice(1),
+              }
+              this.items.push(obj);
+            })
           }
         },
         created() {
           console.log(this.$cookies.get("token"))
           this.cookies=this.$cookies.get("token");
+          this.getCategories();
         },
     }
 </script>
